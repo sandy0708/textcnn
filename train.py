@@ -11,11 +11,6 @@ from vectorizer import Vectorizer
 import torch
 from torch.utils.data import random_split, TensorDataset, DataLoader
 from model import TextCNN
-# from model_sample import CNN_NLP
-
-# df = pd.read_csv('eng_data/spam.csv', encoding='latin1')
-# df['v1'] = df['v1'].replace(['ham','spam'],[0,1])
-# df.drop_duplicates(subset=['v2'], inplace=True)
 
 def load_text(path):
     """Load text data, lowercase text and save to a list."""
@@ -45,7 +40,8 @@ tokenizer = EnglishTokenizer(tokenizer='treebank')
 tokenized = tokenizer.tokenize(cleaned)
 
 ## vectorize
-vectorizer = Vectorizer(tokenized_texts=tokenized)
+vectorizer = Vectorizer(tokenized_texts=tokenized, pretrained=True)
+vocab_size = len(vectorizer.word2idx)
 encoded = vectorizer.vectorize(tokenized)
 padded = vectorizer.pad(encoded)
 
@@ -60,20 +56,22 @@ train_size = int(0.9 * len(full_data))
 test_size = len(full_data) - train_size
 train_data, test_data = random_split(full_data, [train_size, test_size])
 
-
 ## Dataloader
-batch_size = 50
+batch_size = 16
 # train_sampler = RandomSampler(train_data)
 train_dataloader = DataLoader(train_data, batch_size=batch_size, shuffle=True) #sampler=train_sampler,
 test_dataloader = DataLoader(test_data, batch_size=batch_size, shuffle=True)
 
 ## device confiuration
-os.environ["CUDA_VISIBLE_DEVICES"]="4"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
+torch.cuda.empty_cache()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print('Using', device)
 
 ## model initialize
-model = TextCNN(device, num_classes=2)
+model = TextCNN(num_classes=2, vocab_size=vocab_size)
+# model = CNN_CLS(vocab_size=len(vectorizer.word2idx), embed_dim=300)
+# model = CNN_NLP(vocab_size=len(vectorizer.word2idx), embed_dim=300)
 model.to(device)
 loss_fn = torch.nn.CrossEntropyLoss()
 # optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
@@ -84,15 +82,39 @@ epochs = 20
 for epoch in range(1,epochs+1):
     for i, (data, target) in enumerate(train_dataloader):
         data = data.to(device)
-        target = target.to(device) ## target은 1차원
+        target = target.to(device) ## target은 1차원으로 되어있음 
         optimizer.zero_grad()
 
-        output = model(data) ## (8,2) 
+        output = model(data) 
         loss = loss_fn(output, target)
 
-        # backward and optimize
         loss.backward()
         optimizer.step()
 
         if (i+1) % 100 == 0:
             print(f"Epoch [{epoch}/{epochs}], Step [{i+1}/{len(train_dataloader)}], Loss: {loss.item():.4f}")
+
+## test 
+model.eval()
+test_accuracy = []
+test_loss = []
+for i, (data, target) in enumerate(test_dataloader):
+    data = data.to(device)
+    target = target.to(device) 
+    optimizer.zero_grad()
+
+    with torch.no_grad():
+        output = model(data) 
+    
+    loss = loss_fn(output, target)
+    test_loss.append(loss.item())
+
+    preds = torch.argmax(output, dim=1).flatten()
+    accuracy = (preds == target).cpu().numpy().mean() * 100
+    test_accuracy.append(accuracy)
+
+test_loss = np.mean(test_loss)
+test_accuracy = np.mean(test_accuracy)
+
+print('Average loss :', test_loss)
+print('Average accuracy :', test_accuracy)

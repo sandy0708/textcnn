@@ -1,8 +1,6 @@
-### 토큰화된 데이터를 word embedding에 맞게 정수 인코딩을 진행
+### 토큰화된 데이터를 word embedding에 맞게 정수 인코딩 진행
 ### 패딩 진행
-### 22. 3. 10
-### ++ 0314 추가사항 : 기존 데이터로 임베딩 구성할 경우를 위한 함수 작성
-### 최정윤
+
 import sys
 sys.path.append('../../04_word_embedding')
 from word_embedding import WordEmbedding
