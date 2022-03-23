@@ -10,7 +10,9 @@ from word_embedding import WordEmbedding
 import pdb
 
 class TextCNN(nn.Module):
-    def __init__(self, model_ver='CNN-rand',
+    def __init__(self, pretrained_embedding=True,
+                    freeze_embedding=True,
+                    multichannel=False,
                     vocab_size=None, 
                     embedding_dim=300, 
                     window_size=[3,4,5],
@@ -18,25 +20,16 @@ class TextCNN(nn.Module):
                     num_classes=2):
 
         super(TextCNN, self).__init__()
-        if model_ver == 'CNN-rand':
-            '''all words are randomly initialized and then modified during training.'''
-            self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=0)
-        elif model_ver == 'CNN-static':
-            '''pre-trained vectors from word2vec are kept static.'''
+        if pretrained_embedding:
             embedding_matrix = self.load_embedding_vector(embedding_dim=embedding_dim)
-            self.embedding = nn.Embedding.from_pretrained(torch.tensor(embedding_matrix, dtype=torch.float32))
+            self.embedding = nn.Embedding.from_pretrained(torch.tensor(embedding_matrix, dtype=torch.float32), freeze=freeze_embedding) ## static / non-static
             # embedding_dim = embedding_matrix.shape[1]
             # self.embedding = nn.Embedding(num_embeddings=embedding_matrix.shape[0],embedding_dim=embedding_dim) ## (batch, seq_len, 100)
             # self.embedding.weight = nn.Parameter(torch.tensor(embedding_matrix, dtype=torch.float32))
-        elif model_ver == 'CNN-non-static':
-            '''pretrained vectors are fine-tuned for each task'''
-            embedding_matrix = self.load_embedding_vector(embedding_dim=embedding_dim)
-            self.embedding = nn.Embedding.from_pretrained(torch.tensor(embedding_matrix, dtype=torch.float32), freeze=False)
-        elif model_ver == 'CNN-multichannel':
-            '''Both channels are initialized with word2vec, but gradients are backpropagated only through one of the channels'''
-            embedding_matrix = self.load_embedding_vector(embedding_dim=embedding_dim)
-            self.embedding = nn.Embedding.from_pretrained(torch.tensor(embedding_matrix, dtype=torch.float32))
-            self.embedding2 = nn.Embedding.from_pretrained(torch.tensor(embedding_matrix, dtype=torch.float32), freeze=False)
+            if multichannel: ## multichannel
+                self.embedding2 = nn.Embedding.from_pretrained(torch.tensor(embedding_matrix, dtype=torch.float32), freeze=(not freeze_embedding))
+        else:
+            self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=0) ## rand
 
         ## 여러개의 conv layer를 사용할 경우 : nn.ModuleList를 사용할 것
         self.conv1d_list = nn.ModuleList([nn.Conv1d(in_channels=embedding_dim, out_channels=num_filters, kernel_size=w) for w in window_size]) ### bigram filter를 통해 100 -> 1로 컨볼루션 
