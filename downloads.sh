@@ -1,4 +1,5 @@
 # Download data
+mkdir data
 cd data
 wget "https://www.cs.cornell.edu/people/pabo/movie-review-data/rt-polaritydata.tar.gz"
 tar xvzf rt-polaritydata.tar.gz
