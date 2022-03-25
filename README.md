@@ -1,12 +1,15 @@
 TextCNN implementation
 =============
-* How to run   
+How to run
+-------------   
 ```
 ./downloads.sh
 python main.py --model_ver "CNN-static" --batch_size 50 --epoch 20 --lrate 0.1
 ```
 
-* File structure   
+
+File structure
+-------------   
 ```bash
 textcnn    
 ├── downloads.sh    
@@ -24,13 +27,15 @@ textcnn
 │   └── vectorizer.py    
 └── pytorch    
     ├── dataloader.py    
-    ├── model.py    
-	└── train.py    
+    ├── model.py
+    └── train.py
 ```
 
-        
-* Result   
-CNN-rand = 73.39%    
-CNN-static = 75.28%    
-CNN-non-static     
-CNN-multichannel    
+
+  
+Result
+-------------   
+* CNN-rand: 73.39%    
+* CNN-static: 75.28%    
+* CNN-non-static     
+* CNN-multichannel    
