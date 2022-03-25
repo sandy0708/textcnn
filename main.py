@@ -1,5 +1,5 @@
 import argparse
-from train import Trainer
+from pytorch.train import Trainer
 
 parser = argparse.ArgumentParser(description='TextCNN implementation')
 parser.add_argument('--model_ver', type=str, default='CNN-static', help= 'CNN-rand, CNN-static, CNN-non-static, CNN-multichannel')

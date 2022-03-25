@@ -1,13 +1,10 @@
 ### TextCNN model class
 ### pytorch version 
-import sys
-sys.path.append('../../04_word_embedding')
+
 import torch
 from torch import nn
-import numpy as np
 import torch.nn.functional as F
-from word_embedding import WordEmbedding
-import pdb
+from ..embeddings.word_embedding import WordEmbedding
 
 class TextCNN(nn.Module):
     def __init__(self, pretrained_embedding=True,

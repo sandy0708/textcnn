@@ -1,12 +1,9 @@
 import os
-import sys
-sys.path.append('../../04_word_embedding')
+import time
 import numpy as np
 import torch
 from dataloader import Dataloader
 from model import TextCNN
-import pdb
-import time
 
 class Trainer:
     def __init__(self, model_ver='CNN-static', 

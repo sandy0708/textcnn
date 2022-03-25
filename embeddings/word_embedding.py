@@ -2,7 +2,6 @@
 ### 1) word2idx = {word : idx}
 ### 2) embedding matrix for model embedding weight 
 
-import pdb
 import numpy as np
 from gensim.models import KeyedVectors
 

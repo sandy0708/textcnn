@@ -1,6 +1,6 @@
-from english_preprocessing import EnglishPreprocessing
-from english_tokenizer import EnglishTokenizer
-from vectorizer import Vectorizer
+from ..vectorizer.english_preprocessing import EnglishPreprocessing
+from ..vectorizer.english_tokenizer import EnglishTokenizer
+from ..vectorizer.vectorizer import Vectorizer
 
 import torch
 from torch.utils.data import random_split, TensorDataset, DataLoader

@@ -1,8 +1,6 @@
 ### 토큰화된 데이터를 word embedding에 맞게 정수 인코딩 및 패딩
 
-import sys
-sys.path.append('../../04_word_embedding')
-from word_embedding import WordEmbedding
+from ..embeddings.word_embedding import WordEmbedding
 
 class Vectorizer:
     def __init__(self, pretrained=False, tokenized_texts=None, embedding_dim=100):
