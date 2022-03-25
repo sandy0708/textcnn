@@ -7,6 +7,7 @@ python main.py --model_ver "CNN-static" --batch_size 50 --epoch 20 --lrate 0.1
 ```
 
 * File structure   
+```bash
 textcnn    
 ├── downloads.sh    
 ├── main.py    
@@ -25,6 +26,7 @@ textcnn
     ├── dataloader.py    
     ├── model.py    
 	└── train.py    
+```
 
         
 * Result   
