@@ -1,12 +1,11 @@
-### 토큰화된 데이터를 word embedding에 맞게 정수 인코딩 진행
-### 패딩 진행
+### 토큰화된 데이터를 word embedding에 맞게 정수 인코딩 및 패딩
 
 import sys
 sys.path.append('../../04_word_embedding')
 from word_embedding import WordEmbedding
 
 class Vectorizer:
-    def __init__(self, pretrained=True, tokenized_texts=None, embedding_dim=100):
+    def __init__(self, pretrained=False, tokenized_texts=None, embedding_dim=100):
         if pretrained == True: ## if True, use pretrained word embedding
             we = WordEmbedding(f'glove.6B.{embedding_dim}d.txt')
             self.word2idx = we.make_word2idx()
